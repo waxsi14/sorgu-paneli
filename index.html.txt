@@ -1,110 +1,74 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mini Sorgu Paneli</title>
+  <meta charset="UTF-8">
+  <title>Bedava Sorgu Paneli</title>
   <style>
-    :root{--maxw:720px}
-    body{font-family:Inter,Arial,Helvetica,sans-serif;background:#f6f7fb;margin:0;display:flex;align-items:center;justify-content:center;height:100vh}
-    .card{width:calc(100% - 32px);max-width:var(--maxw);background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(16,24,40,.08);padding:22px}
-    h1{margin:0 0 8px;font-size:20px}
-    p.lead{margin:0 0 16px;color:#555}
-    .row{display:flex;gap:8px;margin-bottom:12px}
-    input[type=text]{flex:1;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px}
-    button{padding:10px 14px;border-radius:8px;border:0;background:#2563eb;color:#fff;font-weight:600;cursor:pointer}
-    #result{margin-top:12px;padding:12px;border-radius:8px;background:#f3f4f6;color:#111;font-weight:600}
-    details{margin-top:14px}
-    textarea{width:100%;min-height:120px;padding:10px;border-radius:8px;border:1px solid #ddd;font-family:monospace}
-    small{color:#666}
-    .hint{color:#666;font-size:13px}
+    body {
+      background: #111;
+      color: #fff;
+      font-family: Arial;
+      text-align: center;
+      padding-top: 100px;
+    }
+    input, button {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+    }
+    input {
+      width: 250px;
+    }
+    button {
+      background: #1e90ff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0077ff;
+    }
+    #sonuc {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #0f0;
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Mini Sorgu Paneli</h1>
-    <p class="lead">Hemen kullan: kutuya anahtar girip <strong>Sorgula</strong> butonuna bas.</p>
 
-    <div class="row">
-      <input id="q" type="text" placeholder="Ör: 123 veya kullanici_adi" />
-      <button id="btn">Sorgula</button>
-    </div>
+  <h1>🧩 Bedava Sorgu Paneli</h1>
+  <input type="text" id="tcInput" placeholder="TC girin (örnek: 12345678901)">
+  <button onclick="sorgula()">Sorgula</button>
 
-    <div id="result">Henüz sorgu yapılmadı.</div>
-
-    <details>
-      <summary style="cursor:pointer;margin-top:10px">Veri (JSON) — düzenle ve kaydet</summary>
-      <p class="hint">Buraya anahtar:değer çiftlerini JSON olarak yaz. Örnek: <code>{"123":"Burak","456":"Ali"}</code></p>
-      <textarea id="dataArea">{"123":"Burak Mert","456":"Ali Veli","789":"Ayşe Kaya"}</textarea>
-      <div style="margin-top:8px"><button id="save">Kaydet</button> <small id="saveMsg"></small></div>
-    </details>
-
-    <details open style="margin-top:12px">
-      <summary style="cursor:pointer">Kullanım Notları</summary>
-      <ul>
-        <li>Yerel olarak çalışır — dosyayı tarayıcıda açman yeterli.</li>
-        <li>Verileri düzenleyip <em>Kaydet</em> tuşuna basınca sorgu paneli yeni verilerle çalışır.</li>
-        <li>Benzer bir yapıyı GitHub Pages ile internete yayınlayabilirsin.</li>
-      </ul>
-    </details>
-  </div>
+  <div id="sonuc"></div>
 
   <script>
-    const qEl = document.getElementById('q');
-    const btn = document.getElementById('btn');
-    const result = document.getElementById('result');
-    const area = document.getElementById('dataArea');
-    const save = document.getElementById('save');
-    const saveMsg = document.getElementById('saveMsg');
+    // 🔹 Basit örnek veri tabanı
+    const veriler = {
+      "12345678901": { ad: "Ahmet", soyad: "Yılmaz", yas: 25 },
+      "23456789012": { ad: "Mehmet", soyad: "Kaya", yas: 30 },
+      "34567890123": { ad: "Ayşe", soyad: "Demir", yas: 28 }
+    };
 
-    let DATA = {};
+    function sorgula() {
+      const tc = document.getElementById("tcInput").value.trim();
+      const sonucDiv = document.getElementById("sonuc");
 
-    function loadFromArea(){
-      try{
-        const parsed = JSON.parse(area.value);
-        if (typeof parsed === 'object' && parsed !== null){
-          DATA = parsed;
-          saveMsg.innerText = 'Veri yüklendi.';
-          setTimeout(()=>saveMsg.innerText = '',1200);
-        } else {
-          saveMsg.innerText = 'JSON bir nesne olmalı.';
-          setTimeout(()=>saveMsg.innerText = '',1600);
-        }
-      }catch(e){
-        saveMsg.innerText = 'Geçersiz JSON.';
-        setTimeout(()=>saveMsg.innerText = '',1600);
-      }
-    }
-
-    // ilk yükleme
-    loadFromArea();
-
-    function doSearch(){
-      const q = qEl.value.trim();
-      if (!q) { result.innerText = 'Lütfen bir sorgu gir.'; return; }
-      if (Object.prototype.hasOwnProperty.call(DATA,q)){
-        result.innerText = 'Sonuç: ' + String(DATA[q]);
+      if (veriler[tc]) {
+        const kisi = veriler[tc];
+        sonucDiv.innerHTML = `
+          ✅ <b>TC:</b> ${tc}<br>
+          👤 <b>Ad:</b> ${kisi.ad}<br>
+          🧬 <b>Soyad:</b> ${kisi.soyad}<br>
+          🎂 <b>Yaş:</b> ${kisi.yas}
+        `;
       } else {
-        result.innerText = 'Sonuç bulunamadı.';
+        sonucDiv.innerHTML = "❌ Bu TC'ye ait kayıt bulunamadı.";
       }
     }
-
-    btn.addEventListener('click', doSearch);
-    qEl.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
-    save.addEventListener('click', loadFromArea);
-
-    // İsteğe bağlı: Veriyi localStorage'a kaydet (sayfa yenilense bile kalsın)
-    (function(){
-      const stored = localStorage.getItem('miniSorguPanelData');
-      if (stored){
-        area.value = stored;
-        loadFromArea();
-      }
-
-      save.addEventListener('click', ()=>{
-        localStorage.setItem('miniSorguPanelData', area.value);
-      });
-    })();
   </script>
+
 </body>
 </html>
